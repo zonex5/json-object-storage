@@ -32,6 +32,29 @@ public class JsonObjectStorage {
         return str;
     }
 
+    public boolean containsObject(String name) {
+        return storage.contains(name);
+    }
+
+    /**
+     * Check if object is instance of class.
+     *
+     * @param name  name of stored object
+     * @param clazz checked class
+     * @return true - if object is instance of clazz, false - otherwise or object not fount in the storage
+     */
+    public <T> boolean isObject(String name, Class<T> clazz) {
+        if (!containsObject(name))
+            return false;
+        else {
+            try {
+                return gson.fromJson(gson.toJson(storage.get(name)), clazz) != null;  //todo serialize 'LinkedHashMap to object'
+            } catch (Exception e) {
+                return false;
+            }
+        }
+    }
+
     public <T> T getObject(String name, Class<T> clazz) {
         if (!storage.contains(name)) {
             throw new RuntimeException("Can't find storage '" + name + "'");
@@ -45,6 +68,9 @@ public class JsonObjectStorage {
 
     public <T> void setObject(String name, T object) {
         storage.put(name, object);
+    }
+
+    public void commit() {
         storageFile.write(gson.toJson(storage));
     }
 }

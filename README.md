@@ -29,3 +29,7 @@ storage.setObject("obj1", new Object());
 //load object
 storage.getObject("obj", Object.class);
 ```
+
+<b>TODO:</b> 
+* autocommit true/false
+* reactive java (Project Reactor)
