@@ -4,11 +4,13 @@
 
 ```XML
 
-<repository>
-  <id>reposilite-repository</id>
-  <name>Reposilite Repository</name>
-  <url>http://vkgames.xyz:8089/<repository></url>
-</repository>
+<repositories>
+     <repository>
+         <id>reposilite-repository</id>
+         <name>Reposilite Repository</name>
+         <url>http://vkgames.xyz:8089/releases</url>
+     </repository>
+</repositories>
 
 <dependencies>
     <dependency>
