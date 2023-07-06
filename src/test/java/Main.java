@@ -1,8 +1,8 @@
-import xyz.toway.tools.JsonObjectStorage;
+import xyz.toway.tools.GObjectStorage;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        var db = new JsonObjectStorage("d:\\store\\file.json");
+        var db = new GObjectStorage("d:\\store\\file.json");
 
         Data1 d1 = new Data1();
         d1.setData("kolea");

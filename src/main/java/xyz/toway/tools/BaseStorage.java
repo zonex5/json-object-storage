@@ -7,11 +7,11 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Objects;
 
-public class StorageFile {
+public abstract class BaseStorage {
 
     private final String fileName;
 
-    public StorageFile(String fileName) throws Exception {
+    public BaseStorage(String fileName) throws Exception {
         this.fileName = fileName;
         if (Objects.isNull(fileName) || fileName.isBlank()) {
             throw new Exception("Bad storage file name " + fileName);
@@ -25,15 +25,15 @@ public class StorageFile {
         }
     }
 
-    public void write(String text) {
+    public void writeToFile(String data) {
         try {
-            Files.write(Paths.get(fileName), Collections.singleton(text), StandardCharsets.UTF_8);
+            Files.write(Paths.get(fileName), Collections.singleton(data), StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public String read() {
+    public String readFromFile() {
         try {
             return Files.readString(Paths.get(fileName));
         } catch (IOException e) {
