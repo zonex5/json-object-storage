@@ -18,12 +18,15 @@ public class GObjectStorage extends BaseStorage {
 
     private final HashMap<String, IStorable> storage;
 
+    private final HashMap<String, Collection> collections;
+
     private static final TypeToken<HashMap<String, IStorable>> storageTypeToken = new TypeToken<>() {
     };
 
     public GObjectStorage(String fileName) throws Exception {
         super(fileName);
         gson = new Gson();
+        collections = new HashMap<>();
         storage = getMainStorage();
     }
 
@@ -57,7 +60,10 @@ public class GObjectStorage extends BaseStorage {
     }
 
     public IStorable set(String key, IStorable object) {
-        checkKeyObjectParams(key, object);
+        checkKeyParams(key);
+        if (Objects.isNull(object)) {
+            throw new RuntimeException("The object must be non-null.");
+        }
         if (Objects.isNull(object.getUid())) {
             object.setUid(UUID.randomUUID().toString());
         }
@@ -65,17 +71,14 @@ public class GObjectStorage extends BaseStorage {
         return object;
     }
 
-    public Optional<IStorable> get(String key, IStorable object) {
-        checkKeyObjectParams(key, object);
+    public Optional<IStorable> get(String key) {
+        checkKeyParams(key);
         return !storage.containsKey(key) ? Optional.empty() : Optional.of(storage.get(key));
     }
 
-    private void checkKeyObjectParams(String key, IStorable object) {
+    private void checkKeyParams(String key) {
         if (Objects.isNull(key)) {
             throw new RuntimeException("The key must be non-null.");
-        }
-        if (Objects.isNull(object)) {
-            throw new RuntimeException("The object must be non-null.");
         }
     }
 
