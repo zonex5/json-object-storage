@@ -1,4 +1,8 @@
-public class Data2 {
+import xyz.toway.tools.IStorable;
+
+public class Data2 implements IStorable {
+
+    private String uid;
     private Integer data;
 
     public Integer getData() {
@@ -7,5 +11,22 @@ public class Data2 {
 
     public void setData(Integer data) {
         this.data = data;
+    }
+
+    public Data2(Integer data) {
+        this.data = data;
+    }
+
+    public Data2() {
+    }
+
+    @Override
+    public String getUid() {
+        return uid;
+    }
+
+    @Override
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

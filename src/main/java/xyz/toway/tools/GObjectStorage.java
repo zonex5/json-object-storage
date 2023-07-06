@@ -1,12 +1,12 @@
 package xyz.toway.tools;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 
 /**
@@ -14,18 +14,21 @@ import java.util.UUID;
  */
 public class GObjectStorage extends BaseStorage {
 
+    private static final String ERROR_KEY = "The key must be non-null.";
+
     private final Gson gson;
 
     private final HashMap<String, IStorable> storage;
 
     private final HashMap<String, Collection> collections;
 
-    private static final TypeToken<HashMap<String, IStorable>> storageTypeToken = new TypeToken<>() {
+    private static final TypeToken<HashMap<String, Object>> storageTypeToken = new TypeToken<>() {
     };
 
     public GObjectStorage(String fileName) throws Exception {
         super(fileName);
-        gson = new Gson();
+        //gson = new Gson();
+        gson = new GsonBuilder().setPrettyPrinting().create();
         collections = new HashMap<>();
         storage = getMainStorage();
     }
@@ -51,7 +54,7 @@ public class GObjectStorage extends BaseStorage {
         commit(storage);
     }
 
-    public void commit(HashMap<String, IStorable> storage) {
+    private void commit(HashMap<String, IStorable> storage) {
         writeToFile(gson.toJson(storage));
     }
 
@@ -59,70 +62,54 @@ public class GObjectStorage extends BaseStorage {
         return storage.containsKey(name);
     }
 
-    public IStorable set(String key, IStorable object) {
-        checkKeyParams(key);
-        if (Objects.isNull(object)) {
-            throw new RuntimeException("The object must be non-null.");
-        }
+    public <T extends IStorable> T setObject(String key, T object) {
+        Objects.requireNonNull(key, ERROR_KEY);
+        Objects.requireNonNull(object, "The object must be non-null.");
+
         if (Objects.isNull(object.getUid())) {
-            object.setUid(UUID.randomUUID().toString());
+            object.setUid(uuid());
         }
-        storage.put(key, object);
+        storage.put(getObjectName(key), object);
         return object;
     }
 
-    public Optional<IStorable> get(String key) {
-        checkKeyParams(key);
-        return !storage.containsKey(key) ? Optional.empty() : Optional.of(storage.get(key));
+    public <T extends IStorable> Optional<T> getObject(String key, Class<T> clazz) {
+        Objects.requireNonNull(key, ERROR_KEY);
+        return Optional.ofNullable((Object) storage.get(getObjectName(key)))
+                .map(obj -> gson.fromJson(gson.toJson(obj), clazz));
     }
 
-    private void checkKeyParams(String key) {
-        if (Objects.isNull(key)) {
-            throw new RuntimeException("The key must be non-null.");
-        }
+    /**
+     * Removes the mapping for the specified key from this map if present.
+     */
+    public void removeObject(String name) {
+        storage.remove(getObjectName(name));
     }
 
-
-    /*public <T> T getObject(String name, Class<T> clazz) {
-        if (!storage.contains(name)) {
-            throw new RuntimeException("Can't find storage '" + name + "'");
+    public Collection getCollection(String name) {
+        Objects.requireNonNull(name, "The collection name must be non-null.");
+        Collection collection = Optional.ofNullable(collections.get(name))
+                .map(obj -> gson.fromJson(gson.toJson(obj), Collection.class))
+                .orElse(new Collection());
+        if (Objects.isNull(collection.getUid())) {
+            collection.setUid(uuid());
+            collection.setCommitFunction(this::commit);
+            collection.setConvertFunction((obj, clazz) -> (IStorable) gson.fromJson(gson.toJson(obj), clazz));
+            collections.put(getCollectionName(name), collection);
+            storage.put(getCollectionName(name), collection);
         }
-        try {
-            return gson.fromJson(gson.toJson(storage.get(name)), clazz);  //todo serialize 'LinkedHashMap to object'
-        } catch (Exception e) {
-            throw new RuntimeException("The storage '" + name + "' can't be casted to " + clazz.getName());
-        }
+        return collection;
     }
 
-    public <T> void setObject(String name, T object) {
-        storage.put(name, object);
-    }*/
+    private <T> T convert(Object object, Class<T> clazz) {
+        return gson.fromJson(gson.toJson(object), clazz);
+    }
 
+    private String getObjectName(String key) {
+        return "object$$" + key;
+    }
 
+    private String getCollectionName(String key) {
+        return "collection$$" + key;
+    }
 }
-
-
-
-/*  for collection!
-     public IStorable insert(String key, IStorable object) {
-        checkKeyObjectParams(key, object);
-        if (Objects.nonNull(object.getUid())) {
-            throw new RuntimeException("The object has a non-null uid. Please use 'update' operation.");
-        }
-        object.setUid(UUID.randomUUID().toString());
-        storage.put(key, object);
-        return object;
-    }
-
-    public IStorable update(String key, IStorable object) {
-        checkKeyObjectParams(key, object);
-        if (Objects.isNull(object.getUid())) {
-            throw new RuntimeException("The object has a null uid. Please use 'insert' operation.");
-        }
-        if (!storage.containsKey(key)) {
-            throw new RuntimeException("The storage doesn't contains key '" + key + "'.");
-        }
-        IStorable storedObject = storage.get(key);
-        return object;
-    }
- */

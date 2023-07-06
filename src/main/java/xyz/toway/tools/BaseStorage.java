@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.UUID;
 
 public abstract class BaseStorage {
 
@@ -40,5 +41,12 @@ public abstract class BaseStorage {
             e.printStackTrace();
         }
         return "";
+    }
+
+    /**
+     * Generate uid
+     */
+    public String uuid() {
+        return UUID.randomUUID().toString();
     }
 }
