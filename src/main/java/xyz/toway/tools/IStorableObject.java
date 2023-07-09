@@ -1,6 +1,6 @@
 package xyz.toway.tools;
 
-public interface IStorable {
+public interface IStorableObject {
     String getUid();
 
     void setUid(String uid);

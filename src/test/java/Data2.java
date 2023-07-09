@@ -1,6 +1,6 @@
-import xyz.toway.tools.IStorable;
+import xyz.toway.tools.IStorableObject;
 
-public class Data2 implements IStorable {
+public class Data2 implements IStorableObject {
 
     private String uid;
     private Integer data;
