@@ -1,8 +1,14 @@
 package xyz.toway.tools;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import static xyz.toway.tools.BaseStorageService.uuid;
 import static xyz.toway.tools.Constants.ERROR_OBJECT_NULL;
 
 public class Collection<T extends IStorableObject> {
@@ -36,23 +42,29 @@ public class Collection<T extends IStorableObject> {
         this.commitFunction = commitFunction;
     }
 
-    public void insert(T object) {
-        Objects.requireNonNull(object, ERROR_OBJECT_NULL);
-        if (Objects.nonNull(object.getUid())) {
-            throw new RuntimeException("The object has a non-null uid. Please use 'update' operation.");
-        }
-        object.setUid(UUID.randomUUID().toString());
-        elements.add(object);
-    }
-
     public Optional<T> getFirst() {
         return elements.stream().findFirst();
     }
 
-    public Optional<T> getByUid(String uid) {
+    public Optional<T> getFirst(Predicate<T> p) {
         return elements.stream()
-                .filter(e -> e.getUid().equals(uid))
+                .filter(p)
                 .findFirst();
+    }
+
+    public List<T> getAll() {
+        return elements;
+    }
+
+    public List<T> getAll(Predicate<T> p) {
+        return elements.stream()
+                .filter(p)
+                .collect(Collectors.toList());
+    }
+
+    public Optional<T> getByUid(String uid) {
+        Objects.requireNonNull(uid, "UID can't be null.");
+        return getFirst(obj -> obj.getUid().equals(uid));
     }
 
     public void commit() {
@@ -61,15 +73,22 @@ public class Collection<T extends IStorableObject> {
         }
     }
 
+    public void insert(T object) {
+        Objects.requireNonNull(object, ERROR_OBJECT_NULL);
+        if (Objects.nonNull(object.getUid())) {
+            throw new RuntimeException("The object has a non-null UID. Please use 'update' operation.");
+        }
+        object.setUid(uuid());
+        elements.add(object);
+    }
+
     public T update(T object) {
         Objects.requireNonNull(object, ERROR_OBJECT_NULL);
         if (Objects.isNull(object.getUid())) {
-            throw new RuntimeException("The object has a null uid. Please use 'insert' operation.");
+            throw new RuntimeException("The object has a null UID. Please use 'insert' operation.");
         }
         getByUid(object.getUid())
                 .ifPresent(obj -> elements.set(elements.indexOf(obj), object));
         return object;
     }
-
-
 }

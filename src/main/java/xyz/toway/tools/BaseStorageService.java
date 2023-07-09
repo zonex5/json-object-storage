@@ -55,7 +55,7 @@ public abstract class BaseStorageService {
     /**
      * Generate uid
      */
-    protected String uuid() {
+    public static String uuid() {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
@@ -98,7 +98,7 @@ public abstract class BaseStorageService {
             }
             return properties;
         } catch (IOException e) {
-            throw new RuntimeException("Can't readt application propetries file.");
+            throw new RuntimeException("Can't read application properties file.");
         }
     }
 }

@@ -9,7 +9,6 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Properties;
 
 import static xyz.toway.tools.Constants.ERROR_KEY_NULL;
 import static xyz.toway.tools.Constants.ERROR_OBJECT_NULL;
@@ -22,11 +21,11 @@ public class ObjectStorageService extends BaseStorageService {
 
     private final boolean binary;
 
-    public ObjectStorageService(String fileName) throws Exception {
+    public ObjectStorageService(String fileName, boolean binaryFile) throws Exception {
         super(fileName);
         gson = new GsonBuilder().setPrettyPrinting().create();
         convertGson = new GsonBuilder().create();
-        binary = Boolean.parseBoolean(getProperties().getProperty("binary", "false"));
+        binary = binaryFile;
         storage = new ObjectStorage();
         initObjectStorage();
     }
