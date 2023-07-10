@@ -11,8 +11,8 @@ public class Main {
         col.commit(); */
 
         var db = new ObjectStorageService("d:\\store\\file.json", false);
-        /*
-        db.addObject("obj1", new Data1("petrunea", 765));
+
+        /*db.addObject("obj1", new Data1("petrunea", 765));
         db.addObject("obj2", new Data1("tolea", 2));
         db.commit();*/
 
@@ -21,11 +21,11 @@ public class Main {
         col.insert(new Data1("ion", 2));
         col.commit();*/
 
-        col.getByUid("83480c3164674778986345b80bdab4f5")
+       /* col.getByUid("83480c3164674778986345b80bdab4f5")
                 .ifPresent(obj -> {
-                    col.remove(obj);
-                    col.commit();
-                });
+                    obj.setData("vasea");
+                   // col.commit();
+                });*/
 
         System.out.println();
     }

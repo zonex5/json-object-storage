@@ -47,7 +47,7 @@ public class Collection<T extends IStorableObject> {
         return elements.stream().findFirst();
     }
 
-    public Optional<T> getFirst(Predicate<T> p) {
+    public Optional<T> findFirst(Predicate<T> p) {
         return elements.stream()
                 .filter(p)
                 .findFirst();
@@ -57,15 +57,15 @@ public class Collection<T extends IStorableObject> {
         return elements;
     }
 
-    public List<T> getAll(Predicate<T> p) {
+    public List<T> findAll(Predicate<T> p) {
         return elements.stream()
                 .filter(p)
                 .collect(Collectors.toList());
     }
 
-    public Optional<T> getByUid(String uid) {
+    public Optional<T> findByUid(String uid) {
         Objects.requireNonNull(uid, ERROR_UID_NULL);
-        return getFirst(obj -> obj.getUid().equals(uid));
+        return findFirst(obj -> obj.getUid().equals(uid));
     }
 
     public void commit() {
@@ -83,19 +83,19 @@ public class Collection<T extends IStorableObject> {
         elements.add(object);
     }
 
-    public T update(T object) {  //check wo commit
+    public T update(T object) {
         Objects.requireNonNull(object, ERROR_OBJECT_NULL);
         if (Objects.isNull(object.getUid())) {
             throw new RuntimeException("The object has a null UID. Please use 'insert' operation.");
         }
-        getByUid(object.getUid())
+        findByUid(object.getUid())
                 .ifPresent(obj -> elements.set(elements.indexOf(obj), object));
         return object;
     }
 
     public Optional<T> removeById(String uid) {
         Objects.requireNonNull(uid, ERROR_UID_NULL);
-        var option = getFirst(obj -> obj.getUid().equals(uid));
+        var option = findFirst(obj -> obj.getUid().equals(uid));
         option.ifPresent(obj -> elements.remove(obj));
         return option;
     }
@@ -103,5 +103,11 @@ public class Collection<T extends IStorableObject> {
     public boolean remove(T object) {
         Objects.requireNonNull(object, ERROR_OBJECT_NULL);
         return elements.remove(object);
+    }
+
+    public void set(Collection<T> src) {
+        Objects.requireNonNull(src, "The source collection can't be null.");
+        setElements(src.getElements());
+        setName(src.getName());
     }
 }
