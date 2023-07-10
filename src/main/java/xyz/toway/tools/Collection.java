@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import static xyz.toway.tools.BaseStorageService.uuid;
 import static xyz.toway.tools.Constants.ERROR_OBJECT_NULL;
+import static xyz.toway.tools.Constants.ERROR_UID_NULL;
 
 public class Collection<T extends IStorableObject> {
     private List<T> elements;
@@ -63,7 +64,7 @@ public class Collection<T extends IStorableObject> {
     }
 
     public Optional<T> getByUid(String uid) {
-        Objects.requireNonNull(uid, "UID can't be null.");
+        Objects.requireNonNull(uid, ERROR_UID_NULL);
         return getFirst(obj -> obj.getUid().equals(uid));
     }
 
@@ -82,7 +83,7 @@ public class Collection<T extends IStorableObject> {
         elements.add(object);
     }
 
-    public T update(T object) {
+    public T update(T object) {  //check wo commit
         Objects.requireNonNull(object, ERROR_OBJECT_NULL);
         if (Objects.isNull(object.getUid())) {
             throw new RuntimeException("The object has a null UID. Please use 'insert' operation.");
@@ -90,5 +91,17 @@ public class Collection<T extends IStorableObject> {
         getByUid(object.getUid())
                 .ifPresent(obj -> elements.set(elements.indexOf(obj), object));
         return object;
+    }
+
+    public Optional<T> removeById(String uid) {
+        Objects.requireNonNull(uid, ERROR_UID_NULL);
+        var option = getFirst(obj -> obj.getUid().equals(uid));
+        option.ifPresent(obj -> elements.remove(obj));
+        return option;
+    }
+
+    public boolean remove(T object) {
+        Objects.requireNonNull(object, ERROR_OBJECT_NULL);
+        return elements.remove(object);
     }
 }

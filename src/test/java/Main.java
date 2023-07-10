@@ -17,19 +17,15 @@ public class Main {
         db.commit();*/
 
         var col = db.getCollection("col1", Data1.class);
-        //col.insert(new Data1("qweqwe qwe qwwe ", 345345));
-        //col.insert(new Data1("ion", 2));
-        //col.commit();
+        /*col.insert(new Data1("qweqwe qwe qwwe ", 345345));
+        col.insert(new Data1("ion", 2));
+        col.commit();*/
 
-        /*col.getByUid("db870e75bd604af7bb0abcf1044ea53a")
+        col.getByUid("83480c3164674778986345b80bdab4f5")
                 .ifPresent(obj -> {
-                    obj.setData("tolik");
+                    col.remove(obj);
                     col.commit();
-                });*/
-
-        var all = col.getAll();
-
-        var ttt = col.getAll(e -> e.getData().equals("ion"));
+                });
 
         System.out.println();
     }
