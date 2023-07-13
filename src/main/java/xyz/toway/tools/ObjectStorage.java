@@ -3,7 +3,6 @@ package xyz.toway.tools;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import xyz.toway.tools.storage.ObjectStorage;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -13,26 +12,26 @@ import java.util.Optional;
 import static xyz.toway.tools.Constants.ERROR_KEY_NULL;
 import static xyz.toway.tools.Constants.ERROR_OBJECT_NULL;
 
-public class ObjectStorageService extends BaseStorageService {
+public class ObjectStorage extends BaseStorageService {
 
     private final Gson gson, convertGson;
 
-    private final ObjectStorage storage;
+    private final ObjectStorageUnit storage;
 
     private final boolean binary;
 
-    public ObjectStorageService(String fileName, boolean binaryFile) throws Exception {
+    public ObjectStorage(String fileName, boolean binaryFile) throws Exception {
         super(fileName);
         gson = new GsonBuilder().setPrettyPrinting().create();
         convertGson = new GsonBuilder().create();
         binary = binaryFile;
-        storage = new ObjectStorage();
+        storage = new ObjectStorageUnit();
         initObjectStorage();
     }
 
     private void initObjectStorage() {
         try {
-            var str = gson.fromJson(readFromFile(binary), ObjectStorage.class);
+            var str = gson.fromJson(readFromFile(binary), ObjectStorageUnit.class);
             if (Objects.isNull(str)) {
                 storage.setObjects(new HashMap<>());
                 storage.setCollections(new HashMap<>());

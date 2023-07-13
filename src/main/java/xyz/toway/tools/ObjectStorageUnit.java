@@ -1,8 +1,8 @@
-package xyz.toway.tools.storage;
+package xyz.toway.tools;
 
 import java.util.Map;
 
-public class ObjectStorage {
+class ObjectStorageUnit {
     private Map<String, String> objects;
     private Map<String, String> collections;
 

@@ -12,7 +12,7 @@ import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
-public abstract class BaseStorageService {
+abstract class BaseStorageService {
 
     private final String fileName;
 
