@@ -1,3 +1,5 @@
+## Deprecated! This documentation is not compatible with the current lib version ##
+
 <b>Library for storing objects in a file in json format</b>
 
 <b>Install:</b>
